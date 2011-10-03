@@ -1,10 +1,10 @@
+#include <QClipboard>
+#include <QDir>
+#include <QFile>
 #include <QFileOpenEvent>
 #include <QMessageBox>
-#include <QUrl>
-
-#include <QFile>
-#include <QDir>
 #include <QProcess>
+#include <QUrl>
 
 #include "application.h"
 
@@ -39,9 +39,14 @@ bool Application::event( QEvent *event )
 {
     if ( event->type() == QEvent::FileOpen ) {
         QUrl url = static_cast<QFileOpenEvent *>( event )->url();
-        if ( ! url.isEmpty() && url.scheme() == QString( BROWSEURL_SCHEME ) ) {
-            openUrl( url );
-            return true;
+        if ( ! url.isEmpty() ) {
+            if ( url.scheme() == QString( "file" ) ) {
+                copyLink( url.path() );
+                return true;
+            } else if ( url.scheme() == QString( BROWSEURL_SCHEME ) ) {
+                openUrl( url );
+                return true;
+            }
         }
     }
     return QApplication::event( event );
@@ -135,4 +140,23 @@ void Application::openPathInExplorer( const QString &path )
 void Application::showError( const QString &message )
 {
     QMessageBox::critical( 0, tr( "BrowseURL Error" ), message );
+}
+
+void Application::copyLink( const QString &path )
+{
+    qDebug( path.toLatin1() );
+    QClipboard *clipboard = QApplication::clipboard();
+
+    QString testdir = QDir::homePath();
+
+    if ( path.startsWith( testdir ) ) {
+        QUrl url;
+        url.setScheme( QString( BROWSEURL_SCHEME ) );
+        url.setHost( QString( "home" ) );
+        url.setPath( path.mid( testdir.length() ) );
+        clipboard->setText( QString( url.toEncoded() ) );
+    } else {
+        showError( tr( "No matching BrowseURL domain for local path %1" ).
+                   arg( path ) );
+    }
 }

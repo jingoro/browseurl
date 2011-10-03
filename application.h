@@ -29,6 +29,7 @@ private:
     bool getDomainFromUrl( const QUrl &url, QString *domain, QString *domainPath );
     void openPathInExplorer( const QString &path );
     void showError( const QString &message );
+    void copyLink( const QString &path );
 
     QTime           openUrlTime;
     int             openUrlCount;
