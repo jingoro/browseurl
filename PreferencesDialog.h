@@ -15,11 +15,12 @@ class PreferencesDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PreferencesDialog(QWidget *parent = 0);
+    explicit PreferencesDialog( DomainModel *domainModel, QWidget *parent = 0 );
     ~PreferencesDialog();
     DomainModel *getDomainModel();
 
 public slots:
+    void show();
     void addDomain();
     void raiseDomain();
     void lowerDomain();

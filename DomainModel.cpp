@@ -5,10 +5,6 @@
 DomainModel::DomainModel( QObject *parent ) :
     QAbstractTableModel( parent )
 {
-    // TODO
-    addDomain( "dropbox", QDir::homePath() + "/Dropbox" );
-    addDomain( "aerofs",  QDir::homePath() + "/AeroFS" );
-    addDomain( "home",    QDir::homePath() );
 }
 
 int DomainModel::rowCount( const QModelIndex &parent ) const

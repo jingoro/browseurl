@@ -4,23 +4,26 @@
 #include <QFileOpenEvent>
 #include <QMessageBox>
 #include <QProcess>
+#include <QSettings>
 #include <QUrl>
 
 #include "Application.h"
-#include "Domain.h"
 
 Application::Application( int &argc, char **argv ) :
-    QApplication(argc, argv)
+    QApplication( argc, argv ),
+    domainModel( new DomainModel() ),
+    aboutDialog( 0 ),
+    preferencesDialog( 0 ),
+    openUrlTime( QTime() ),
+    openUrlCount( 0 )
 {
-    aboutDialog = 0;
-    preferencesDialog = 0;
-    openUrlTime = QTime();
-    openUrlCount = 0;
-    setQuitOnLastWindowClosed(false);
+    setApplicationName( BROWSEURL_APPLICATION );
+    setOrganizationName( BROWSEURL_ORG_NAME );
+    setOrganizationDomain( BROWSEURL_ORG_DOMAIN );
+    readSettings();
+    setQuitOnLastWindowClosed( false );
     createTrayMenu();
-
-    // Testing
-    showPreferencesDialog();
+    connect( this, SIGNAL( aboutToQuit() ), this, SLOT( updateSettings() ) );
 }
 
 void Application::createTrayMenu()
@@ -35,7 +38,7 @@ void Application::createTrayMenu()
 void Application::showAboutDialog()
 {
     if ( ! aboutDialog ) {
-        aboutDialog = new AboutDialog( 0 );
+        aboutDialog = new AboutDialog();
     }
     aboutDialog->show();
 }
@@ -43,7 +46,8 @@ void Application::showAboutDialog()
 void Application::showPreferencesDialog()
 {
     if ( ! preferencesDialog ) {
-        preferencesDialog = new PreferencesDialog( 0 );
+        preferencesDialog = new PreferencesDialog( domainModel );
+        connect( preferencesDialog, SIGNAL( accepted() ), this, SLOT( updateSettings() ) );
     }
     preferencesDialog->show();
 }
@@ -117,7 +121,7 @@ bool Application::getDomainFromUrl( const QUrl &url,
 {
     // TODO
     QString testDomain = url.host();
-    QList < Domain > domains = preferencesDialog->getDomainModel()->getDomains();
+    QList < Domain > domains = domainModel->getDomains();
 
     foreach ( const Domain &domain, domains ) {
         if ( testDomain == domain.getDomain() ) {
@@ -153,7 +157,7 @@ void Application::copyLink( const QString &path )
 {
     qDebug( path.toLatin1() );
 
-    QList < Domain > domains = preferencesDialog->getDomainModel()->getDomains();
+    QList < Domain > domains = domainModel->getDomains();
 
     foreach ( const Domain &domain, domains ) {
         if ( path.startsWith( domain.getLocalPath() ) ) {
@@ -168,4 +172,51 @@ void Application::copyLink( const QString &path )
     }
     showError( tr( "No matching BrowseURL domain for local path %1" ).
                arg( path ) );
+}
+
+void Application::readSettings()
+{
+    QSettings settings;
+    if ( ! settings.value( "domains/size" ).isValid() ) {
+        setDefaultSettings();
+        return;
+    }
+    QList < Domain > domains = domainModel->getDomains();
+    int size = settings.beginReadArray("domains");
+    for ( int i = 0; i < size; i++ ) {
+        settings.setArrayIndex( i );
+        QString domain = settings.value( "domain" ).toString();
+        QString localPath = settings.value( "localPath" ).toString();
+        domainModel->addDomain( domain, localPath );
+    }
+    settings.endArray();
+}
+
+void Application::setDefaultSettings()
+{
+    qDebug( "setDefaultSettings()" );
+    domainModel->addDomain( "dropbox", QDir::homePath() + "/Dropbox" );
+    domainModel->addDomain( "aerofs",  QDir::homePath() + "/AeroFS" );
+    domainModel->addDomain( "home",    QDir::homePath() );
+}
+
+void Application::writeSettings()
+{
+    QSettings settings;
+    QList < Domain > domains = domainModel->getDomains();
+    int i = 0;
+    settings.beginWriteArray("domains");
+    foreach ( const Domain &domain, domains ) {
+        settings.setArrayIndex( i );
+        settings.setValue( "domain", domain.getDomain() );
+        settings.setValue( "localPath", domain.getLocalPath() );
+        i++;
+    }
+    settings.endArray();
+}
+
+void Application::updateSettings()
+{
+    qDebug("updateSettings");
+    writeSettings();
 }

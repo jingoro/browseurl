@@ -11,7 +11,9 @@ QWidget *DomainDelegate::createEditor( QWidget *parent,
                                        const QStyleOptionViewItem &option,
                                        const QModelIndex &index ) const
 {
-    QLineEdit *editor = new QLineEdit(parent);
+    Q_UNUSED( option );
+    Q_UNUSED( index );
+    QLineEdit *editor = new QLineEdit( parent );
     return editor;
 }
 

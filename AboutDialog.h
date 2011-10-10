@@ -12,14 +12,14 @@ class AboutDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AboutDialog(QWidget *parent = 0);
+    explicit AboutDialog( QWidget *parent = 0 );
     ~AboutDialog();
 
     void show();
 
-public slots:
-    void accept();
-    void reject();
+//public slots:
+//    void accept();
+//    void reject();
 
 private:
     Ui::AboutDialog *ui;

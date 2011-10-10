@@ -15,23 +15,24 @@ AboutDialog::~AboutDialog()
 
 void AboutDialog::show()
 {
-    if ( origGeometry.isNull() ) {
-        QDialog::show();
-        origGeometry = geometry();
-    } else {
-        setGeometry( origGeometry );
-        QDialog::show();
-    }
+//    if ( origGeometry.isNull() ) {
+//        QDialog::show();
+//        origGeometry = geometry();
+//    } else {
+//        setGeometry( origGeometry );
+//        QDialog::show();
+//    }
+    QDialog::show();
     raise();
     activateWindow();
 }
 
-void AboutDialog::accept()
-{
-    hide();
-}
+//void AboutDialog::accept()
+//{
+//    hide();
+//}
 
-void AboutDialog::reject()
-{
-    hide();
-}
+//void AboutDialog::reject()
+//{
+//    hide();
+//}

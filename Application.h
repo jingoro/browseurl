@@ -5,10 +5,12 @@
 #include <QSystemTrayIcon>
 #include <QTime>
 
+#include "constants.h"
+
 #include "AboutDialog.h"
+#include "DomainModel.h"
 #include "PreferencesDialog.h"
 #include "TrayMenu.h"
-#include "constants.h"
 
 class Application : public QApplication
 {
@@ -20,6 +22,7 @@ public:
 public slots:
     void showAboutDialog();
     void showPreferencesDialog();
+    void updateSettings();
 
 protected:
     bool event( QEvent * );
@@ -33,9 +36,14 @@ private:
     void showError( const QString &message );
     void copyLink( const QString &path );
 
+    void readSettings();
+    void writeSettings();
+    void setDefaultSettings();
+
     QTime openUrlTime;
     int   openUrlCount;
 
+    DomainModel       *domainModel;
     AboutDialog       *aboutDialog;
     PreferencesDialog *preferencesDialog;
     TrayMenu          *trayMenu;
