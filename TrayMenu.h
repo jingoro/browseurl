@@ -12,6 +12,7 @@ public:
     ~TrayMenu();
 
 private:
+    QAction *preferencesAction;
     QAction *aboutAction;
     QAction *quitAction;
 };

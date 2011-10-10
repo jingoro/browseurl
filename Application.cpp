@@ -6,16 +6,21 @@
 #include <QProcess>
 #include <QUrl>
 
-#include "application.h"
+#include "Application.h"
+#include "Domain.h"
 
 Application::Application( int &argc, char **argv ) :
     QApplication(argc, argv)
 {
     aboutDialog = 0;
+    preferencesDialog = 0;
     openUrlTime = QTime();
     openUrlCount = 0;
     setQuitOnLastWindowClosed(false);
     createTrayMenu();
+
+    // Testing
+    showPreferencesDialog();
 }
 
 void Application::createTrayMenu()
@@ -33,6 +38,14 @@ void Application::showAboutDialog()
         aboutDialog = new AboutDialog( 0 );
     }
     aboutDialog->show();
+}
+
+void Application::showPreferencesDialog()
+{
+    if ( ! preferencesDialog ) {
+        preferencesDialog = new PreferencesDialog( 0 );
+    }
+    preferencesDialog->show();
 }
 
 bool Application::event( QEvent *event )
@@ -100,24 +113,18 @@ bool Application::openUrlThrottle()
 }
 
 bool Application::getDomainFromUrl( const QUrl &url,
-                                    QString *domain, QString *domainPath )
+                                    QString *aDomain, QString *domainPath )
 {
     // TODO
     QString testDomain = url.host();
-    if ( testDomain == QString("home") ) {
-        *domain     = QString("home");
-        *domainPath = QDir::homePath();
-        return true;
-    }
-    if ( testDomain == QString("aerofs") ) {
-        *domain     = QString("aerofs");
-        *domainPath = QDir::homePath() + "/AeroFS";
-        return true;
-    }
-    if ( testDomain == QString("dropbox") ) {
-        *domain     = QString("dropbox");
-        *domainPath = QDir::homePath() + "/Dropbox";
-        return true;
+    QList < Domain > domains = preferencesDialog->getDomainModel()->getDomains();
+
+    foreach ( const Domain &domain, domains ) {
+        if ( testDomain == domain.getDomain() ) {
+            *aDomain = domain.getDomain();
+            *domainPath = domain.getLocalPath();
+            return true;
+        }
     }
     return false;
 }
@@ -145,18 +152,20 @@ void Application::showError( const QString &message )
 void Application::copyLink( const QString &path )
 {
     qDebug( path.toLatin1() );
-    QClipboard *clipboard = QApplication::clipboard();
 
-    QString testdir = QDir::homePath();
+    QList < Domain > domains = preferencesDialog->getDomainModel()->getDomains();
 
-    if ( path.startsWith( testdir ) ) {
-        QUrl url;
-        url.setScheme( QString( BROWSEURL_SCHEME ) );
-        url.setHost( QString( "home" ) );
-        url.setPath( path.mid( testdir.length() ) );
-        clipboard->setText( QString( url.toEncoded() ) );
-    } else {
-        showError( tr( "No matching BrowseURL domain for local path %1" ).
-                   arg( path ) );
+    foreach ( const Domain &domain, domains ) {
+        if ( path.startsWith( domain.getLocalPath() ) ) {
+             QUrl url;
+             url.setScheme( QString( BROWSEURL_SCHEME ) );
+             url.setHost( domain.getDomain() );
+             url.setPath( path.mid( domain.getLocalPath().length() ) );
+             QClipboard *clipboard = QApplication::clipboard();
+             clipboard->setText( QString( url.toEncoded() ) );
+             return;
+        }
     }
+    showError( tr( "No matching BrowseURL domain for local path %1" ).
+               arg( path ) );
 }

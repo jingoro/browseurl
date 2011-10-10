@@ -5,8 +5,9 @@
 #include <QSystemTrayIcon>
 #include <QTime>
 
-#include "aboutdialog.h"
-#include "traymenu.h"
+#include "AboutDialog.h"
+#include "PreferencesDialog.h"
+#include "TrayMenu.h"
 #include "constants.h"
 
 class Application : public QApplication
@@ -18,6 +19,7 @@ public:
 
 public slots:
     void showAboutDialog();
+    void showPreferencesDialog();
 
 protected:
     bool event( QEvent * );
@@ -31,12 +33,13 @@ private:
     void showError( const QString &message );
     void copyLink( const QString &path );
 
-    QTime           openUrlTime;
-    int             openUrlCount;
+    QTime openUrlTime;
+    int   openUrlCount;
 
-    AboutDialog     *aboutDialog;
-    TrayMenu        *trayMenu;
-    QSystemTrayIcon *trayIcon;
+    AboutDialog       *aboutDialog;
+    PreferencesDialog *preferencesDialog;
+    TrayMenu          *trayMenu;
+    QSystemTrayIcon   *trayIcon;
 };
 
 #endif // APPLICATION_H

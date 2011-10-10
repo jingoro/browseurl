@@ -10,18 +10,27 @@ TARGET = BrowseURL
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    traymenu.cpp \
-    application.cpp \
-    aboutdialog.cpp
+    PreferencesDialog.cpp \
+    TrayMenu.cpp \
+    AboutDialog.cpp \
+    Application.cpp \
+    DomainModel.cpp \
+    Domain.cpp \
+    DomainDelegate.cpp
 
 HEADERS  += \
-    traymenu.h \
-    application.h \
-    aboutdialog.h \
-    constants.h
+    constants.h \
+    PreferencesDialog.h \
+    AboutDialog.h \
+    Application.h \
+    DomainModel.h \
+    TrayMenu.h \
+    Domain.h \
+    DomainDelegate.h
 
 FORMS    += \
-    aboutdialog.ui
+    PreferencesDialog.ui \
+    AboutDialog.ui
 
 OTHER_FILES += \
     Info.plist \
@@ -40,4 +49,31 @@ APP_QML_FILES.files = osx-open-in-finder.scpt
 APP_QML_FILES.path = Contents/Resources
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
