@@ -9,6 +9,7 @@
 
 #include "AboutDialog.h"
 #include "DomainModel.h"
+#include "OsProxy.h"
 #include "PreferencesDialog.h"
 #include "TrayMenu.h"
 
@@ -18,6 +19,7 @@ class Application : public QApplication
 
 public:
     explicit Application( int &argc, char ** argv );
+    ~Application();
 
 public slots:
     void showAboutDialog();
@@ -43,8 +45,9 @@ private:
     QTime openUrlTime;
     int   openUrlCount;
 
-    DomainModel       *domainModel;
     AboutDialog       *aboutDialog;
+    DomainModel       *domainModel;
+    OsProxy           *osProxy;
     PreferencesDialog *preferencesDialog;
     TrayMenu          *trayMenu;
     QSystemTrayIcon   *trayIcon;

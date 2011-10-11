@@ -17,14 +17,8 @@ public:
 
     void show();
 
-//public slots:
-//    void accept();
-//    void reject();
-
 private:
     Ui::AboutDialog *ui;
-
-    QRect origGeometry;
 };
 
 #endif // ABOUTDIALOG_H

@@ -9,6 +9,10 @@
 
 #include "Application.h"
 
+#ifdef Q_WS_MAC
+#include "CocoaProxy.h"
+#endif
+
 Application::Application( int &argc, char **argv ) :
     QApplication( argc, argv ),
     domainModel( new DomainModel() ),
@@ -17,6 +21,13 @@ Application::Application( int &argc, char **argv ) :
     openUrlTime( QTime() ),
     openUrlCount( 0 )
 {
+
+#ifdef Q_WS_MAC
+    osProxy = new CocoaProxy();
+#else
+    osProxy = new OsProxy();
+#endif
+
     setApplicationName( BROWSEURL_APPLICATION );
     setOrganizationName( BROWSEURL_ORG_NAME );
     setOrganizationDomain( BROWSEURL_ORG_DOMAIN );
@@ -24,6 +35,14 @@ Application::Application( int &argc, char **argv ) :
     setQuitOnLastWindowClosed( false );
     createTrayMenu();
     connect( this, SIGNAL( aboutToQuit() ), this, SLOT( updateSettings() ) );
+}
+
+Application::~Application()
+{
+    delete preferencesDialog;
+    delete aboutDialog;
+    delete domainModel;
+    delete osProxy;
 }
 
 void Application::createTrayMenu()
@@ -46,8 +65,8 @@ void Application::showAboutDialog()
 void Application::showPreferencesDialog()
 {
     if ( ! preferencesDialog ) {
-        preferencesDialog = new PreferencesDialog( domainModel );
-        connect( preferencesDialog, SIGNAL( accepted() ), this, SLOT( updateSettings() ) );
+        preferencesDialog = new PreferencesDialog( osProxy, domainModel );
+        connect( preferencesDialog, SIGNAL( rejected() ), this, SLOT( updateSettings() ) );
     }
     preferencesDialog->show();
 }
@@ -198,6 +217,7 @@ void Application::setDefaultSettings()
     domainModel->addDomain( "dropbox", QDir::homePath() + "/Dropbox" );
     domainModel->addDomain( "aerofs",  QDir::homePath() + "/AeroFS" );
     domainModel->addDomain( "home",    QDir::homePath() );
+    osProxy->enableAutostart();
 }
 
 void Application::writeSettings()
@@ -217,6 +237,6 @@ void Application::writeSettings()
 
 void Application::updateSettings()
 {
-    qDebug("updateSettings");
+    //qDebug("updateSettings");
     writeSettings();
 }

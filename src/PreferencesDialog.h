@@ -5,6 +5,7 @@
 
 #include "DomainModel.h"
 #include "DomainDelegate.h"
+#include "OsProxy.h"
 
 namespace Ui {
     class PreferencesDialog;
@@ -15,7 +16,7 @@ class PreferencesDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PreferencesDialog( DomainModel *domainModel, QWidget *parent = 0 );
+    explicit PreferencesDialog( OsProxy *osProxy, DomainModel *domainModel, QWidget *parent = 0 );
     ~PreferencesDialog();
     DomainModel *getDomainModel();
 
@@ -25,6 +26,7 @@ public slots:
     void raiseDomain();
     void lowerDomain();
     void deleteDomain();
+    void updateAutostartCheckBox();
 
 private:
     int getSelectedRow();
@@ -32,6 +34,7 @@ private:
     Ui::PreferencesDialog *ui;
     DomainModel    *domainModel;
     DomainDelegate *domainDelegate;
+    OsProxy        *osProxy;
 };
 
 #endif // PREFERENCESDIALOG_H

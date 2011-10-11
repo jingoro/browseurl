@@ -6,6 +6,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+    setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 }
 
 AboutDialog::~AboutDialog()
@@ -15,24 +16,7 @@ AboutDialog::~AboutDialog()
 
 void AboutDialog::show()
 {
-//    if ( origGeometry.isNull() ) {
-//        QDialog::show();
-//        origGeometry = geometry();
-//    } else {
-//        setGeometry( origGeometry );
-//        QDialog::show();
-//    }
     QDialog::show();
     raise();
     activateWindow();
 }
-
-//void AboutDialog::accept()
-//{
-//    hide();
-//}
-
-//void AboutDialog::reject()
-//{
-//    hide();
-//}

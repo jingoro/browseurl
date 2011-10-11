@@ -1,79 +1,58 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2011-10-02T12:49:07
-#
-#-------------------------------------------------
-
-QT       += core gui
+QT += core gui
 
 TARGET = BrowseURL
 TEMPLATE = app
 
-SOURCES += main.cpp \
-    PreferencesDialog.cpp \
-    TrayMenu.cpp \
-    AboutDialog.cpp \
-    Application.cpp \
-    DomainModel.cpp \
-    Domain.cpp \
-    DomainDelegate.cpp
+HEADERS += \
+    src/constants.h \
+    src/AboutDialog.h \
+    src/Application.h \
+    src/CocoaProxy.h \
+    src/Domain.h \
+    src/DomainDelegate.h \
+    src/DomainModel.h \
+    src/OsProxy.h \
+    src/PreferencesDialog.h \
+    src/TrayMenu.h
 
-HEADERS  += \
-    constants.h \
-    PreferencesDialog.h \
-    AboutDialog.h \
-    Application.h \
-    DomainModel.h \
-    TrayMenu.h \
-    Domain.h \
-    DomainDelegate.h
+SOURCES += src/main.cpp \
+    src/AboutDialog.cpp \
+    src/Application.cpp \
+    src/Domain.cpp \
+    src/DomainDelegate.cpp \
+    src/DomainModel.cpp \
+    src/OsProxy.cpp \
+    src/PreferencesDialog.cpp \
+    src/TrayMenu.cpp
 
-FORMS    += \
-    PreferencesDialog.ui \
-    AboutDialog.ui
+FORMS += \
+    forms/AboutDialog.ui \
+    forms/PreferencesDialog.ui
 
 OTHER_FILES += \
-    Info.plist \
-    heart.svg \
-    heart.ico \
-    heart.icns \
-    osx-open-in-finder.scpt
+    resources/Info.plist \
+    resources/heart.svg \
+    resources/heart.ico \
+    resources/heart.icns \
+    resources/osx-open-in-finder.scpt
 
 RESOURCES += \
-    resources.qrc
+    resources/resources.qrc
 
 macx {
-ICON = heart.icns
-QMAKE_INFO_PLIST = Info.plist
-APP_QML_FILES.files = osx-open-in-finder.scpt
+
+OBJECTIVE_SOURCES += \
+    src/CocoaProxy.mm
+
+HEADERS +=
+
+LIBS += -framework AppKit
+
+ICON = resources/heart.icns
+
+QMAKE_INFO_PLIST = resources/Info.plist
+APP_QML_FILES.files = resources/osx-open-in-finder.scpt
 APP_QML_FILES.path = Contents/Resources
 QMAKE_BUNDLE_DATA += APP_QML_FILES
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
