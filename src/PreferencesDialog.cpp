@@ -15,7 +15,7 @@ PreferencesDialog::PreferencesDialog( OsProxy *aOsProxy, DomainModel *aDomainMod
     ui->domainListTableView->setItemDelegate( domainDelegate );
     ui->domainListTableView->horizontalHeader()->setStretchLastSection( true );
 
-    ui->autostartCheckBox->setCheckState( osProxy->autostartEnabled() ? Qt::Checked : Qt::Unchecked );
+    ui->autostartCheckBox->setCheckState( osProxy->isAutostartEnabled() ? Qt::Checked : Qt::Unchecked );
     connect( ui->autostartCheckBox, SIGNAL( stateChanged(int) ), this, SLOT( updateAutostartCheckBox() ) );
 }
 
@@ -75,7 +75,7 @@ void PreferencesDialog::updateAutostartCheckBox()
         qDebug( "enabling autostart" );
         osProxy->enableAutostart();
     } else {
-        qDebug( "disabling autostart" );
-        osProxy->disableAutostart();
+        qDebug( "removing autostart" );
+        osProxy->removeAutostart();
     }
 }

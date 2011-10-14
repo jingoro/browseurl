@@ -1,14 +1,8 @@
 #include "OsProxy.h"
 
-bool OsProxy::autostartEnabled() const
-{
-    return false;
-}
+#include <QStringList>
 
-void OsProxy::enableAutostart()
-{
-}
-
-void OsProxy::disableAutostart()
+OsProxy::OsProxy( QObject * parent ) :
+    QObject( parent )
 {
 }

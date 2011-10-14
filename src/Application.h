@@ -25,18 +25,20 @@ public slots:
     void showAboutDialog();
     void showPreferencesDialog();
     void updateSettings();
+    void copyLinksFromFiles( const QStringList & files );
 
 protected:
     bool event( QEvent * );
 
 private:
+    OsProxy * createOsProxy();
     void createTrayMenu();
     void openUrl( const QUrl &url );
     bool openUrlThrottle();
     bool getDomainFromUrl( const QUrl &url, QString *domain, QString *domainPath );
     void openPathInExplorer( const QString &path );
     void showError( const QString &message );
-    void copyLink( const QString &path );
+    QString createCopyLink( const QString &path ) const;
 
     void readSettings();
     void writeSettings();

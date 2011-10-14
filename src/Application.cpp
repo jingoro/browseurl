@@ -5,29 +5,30 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QSettings>
+#include <QStringList>
 #include <QUrl>
 
 #include "Application.h"
 
-#ifdef Q_WS_MAC
-#include "CocoaProxy.h"
+#if defined( Q_WS_MAC )
+#include "MacProxy.h"
+#elif defined( Q_OS_WIN )
+#error TODO Unsupported platform!
+#elif defined( Q_OS_UNIX )
+#error TODO Unsupported platform!
+#else
+#error Unsupported platform!
 #endif
 
 Application::Application( int &argc, char **argv ) :
     QApplication( argc, argv ),
+    osProxy( createOsProxy() ),
     domainModel( new DomainModel() ),
     aboutDialog( 0 ),
     preferencesDialog( 0 ),
     openUrlTime( QTime() ),
     openUrlCount( 0 )
 {
-
-#ifdef Q_WS_MAC
-    osProxy = new CocoaProxy();
-#else
-    osProxy = new OsProxy();
-#endif
-
     setApplicationName( BROWSEURL_APPLICATION );
     setOrganizationName( BROWSEURL_ORG_NAME );
     setOrganizationDomain( BROWSEURL_ORG_DOMAIN );
@@ -35,6 +36,8 @@ Application::Application( int &argc, char **argv ) :
     setQuitOnLastWindowClosed( false );
     createTrayMenu();
     connect( this, SIGNAL( aboutToQuit() ), this, SLOT( updateSettings() ) );
+    connect( osProxy, SIGNAL( filesForCopyLinks( const QStringList & ) ),
+             this, SLOT( copyLinksFromFiles( const QStringList & ) ) );
 }
 
 Application::~Application()
@@ -43,6 +46,19 @@ Application::~Application()
     delete aboutDialog;
     delete domainModel;
     delete osProxy;
+}
+
+OsProxy * Application::createOsProxy()
+{
+#if defined( Q_OS_MAC )
+    return new MacProxy( this );
+#elif defined( Q_OS_WIN )
+    return new WinProxy( this ); // TODO
+#elif defined( Q_OS_UNIX )
+    return new UnixProxy( this ); // TODO
+#else
+#error Unsupported platform!
+#endif
 }
 
 void Application::createTrayMenu()
@@ -76,10 +92,11 @@ bool Application::event( QEvent *event )
     if ( event->type() == QEvent::FileOpen ) {
         QUrl url = static_cast<QFileOpenEvent *>( event )->url();
         if ( ! url.isEmpty() ) {
-            if ( url.scheme() == QString( "file" ) ) {
-                copyLink( url.path() );
-                return true;
-            } else if ( url.scheme() == QString( BROWSEURL_SCHEME ) ) {
+//            if ( url.scheme() == QString( "file" ) ) {
+//                copyLink( url.path() );
+//                return true;
+//            } else
+            if ( url.scheme() == QString( BROWSEURL_SCHEME ) ) {
                 openUrl( url );
                 return true;
             }
@@ -152,19 +169,9 @@ bool Application::getDomainFromUrl( const QUrl &url,
     return false;
 }
 
-void Application::openPathInExplorer( const QString &path )
+void Application::openPathInExplorer( const QString & path )
 {
-#if defined( Q_OS_WIN )
-    showError( tr( "Unsupported Platform") );
-#elif defined( Q_OS_MAC )
-    QStringList args;
-    args << ( applicationDirPath() + "/../Resources/osx-open-in-finder.scpt" );
-    args << path;
-    QProcess::execute( QString( "/usr/bin/osascript" ), args );
-#else
-    // Linux/UNIX ?
-    showError( tr( "Unsupported Platform" ) );
-#endif
+    osProxy->browsePath( path );
 }
 
 void Application::showError( const QString &message )
@@ -172,25 +179,35 @@ void Application::showError( const QString &message )
     QMessageBox::critical( 0, tr( "BrowseURL Error" ), message );
 }
 
-void Application::copyLink( const QString &path )
+void Application::copyLinksFromFiles( const QStringList & files )
 {
-    qDebug( path.toLatin1() );
+    QStringList copyLinks;
+    foreach ( const QString & file, files ) {
+        QString copyLink = createCopyLink( file );
+        if ( copyLink.isEmpty() ) {
+            showError( tr( "No matching BrowseURL domain for local path %1" ).
+                       arg( file ) );
+            return;
+        }
+        copyLinks.append( copyLink );
+    }
+    QApplication::clipboard()->setText( copyLinks.join( "\n" ) );
+}
 
+QString Application::createCopyLink( const QString & path ) const
+{
     QList < Domain > domains = domainModel->getDomains();
 
-    foreach ( const Domain &domain, domains ) {
+    foreach ( const Domain & domain, domains ) {
         if ( path.startsWith( domain.getLocalPath() ) ) {
              QUrl url;
              url.setScheme( QString( BROWSEURL_SCHEME ) );
              url.setHost( domain.getDomain() );
              url.setPath( path.mid( domain.getLocalPath().length() ) );
-             QClipboard *clipboard = QApplication::clipboard();
-             clipboard->setText( QString( url.toEncoded() ) );
-             return;
+             return QString( url.toEncoded() );
         }
     }
-    showError( tr( "No matching BrowseURL domain for local path %1" ).
-               arg( path ) );
+    return QString();
 }
 
 void Application::readSettings()

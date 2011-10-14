@@ -7,15 +7,16 @@ HEADERS += \
     src/constants.h \
     src/AboutDialog.h \
     src/Application.h \
-    src/CocoaProxy.h \
     src/Domain.h \
     src/DomainDelegate.h \
     src/DomainModel.h \
     src/OsProxy.h \
     src/PreferencesDialog.h \
-    src/TrayMenu.h
+    src/TrayMenu.h \
+    src/MacProxyDelegate.h
 
-SOURCES += src/main.cpp \
+SOURCES += \
+    src/main.cpp \
     src/AboutDialog.cpp \
     src/Application.cpp \
     src/Domain.cpp \
@@ -23,7 +24,8 @@ SOURCES += src/main.cpp \
     src/DomainModel.cpp \
     src/OsProxy.cpp \
     src/PreferencesDialog.cpp \
-    src/TrayMenu.cpp
+    src/TrayMenu.cpp \
+    src/MacProxyDelegate.mm
 
 FORMS += \
     forms/AboutDialog.ui \
@@ -33,8 +35,7 @@ OTHER_FILES += \
     resources/Info.plist \
     resources/heart.svg \
     resources/heart.ico \
-    resources/heart.icns \
-    resources/osx-open-in-finder.scpt
+    resources/heart.icns
 
 RESOURCES += \
     resources/resources.qrc
@@ -42,17 +43,23 @@ RESOURCES += \
 macx {
 
 OBJECTIVE_SOURCES += \
-    src/CocoaProxy.mm
+    src/MacProxy.mm
 
-HEADERS +=
+HEADERS += \
+    src/MacProxy.h
 
 LIBS += -framework AppKit
 
 ICON = resources/heart.icns
 
 QMAKE_INFO_PLIST = resources/Info.plist
-APP_QML_FILES.files = resources/osx-open-in-finder.scpt
+APP_QML_FILES.files =
 APP_QML_FILES.path = Contents/Resources
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 
 }
+
+
+
+
+

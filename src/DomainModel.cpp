@@ -54,6 +54,8 @@ QVariant DomainModel::headerData( int section, Qt::Orientation orientation, int 
         case 1:
             return tr( "Local Path" );
         }
+    } else if ( orientation == Qt::Vertical ) {
+        return QString( "%1" ).arg( section + 1 );
     }
     return QVariant();
 }
