@@ -235,6 +235,10 @@ void Application::setDefaultSettings()
     domainModel->addDomain( "aerofs",  QDir::homePath() + "/AeroFS" );
     domainModel->addDomain( "home",    QDir::homePath() );
     osProxy->enableAutostart();
+#if defined( Q_WS_MAC )
+    // TODO
+    QProcess::execute( QString( "/System/Library/CoreServices/pbs" ) );
+#endif
 }
 
 void Application::writeSettings()

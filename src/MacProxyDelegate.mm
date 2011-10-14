@@ -52,11 +52,6 @@
 {
     NSString *nsPath = [ NSString stringWithUTF8String: ( path.toUtf8().constData() ) ];
     [ [ NSWorkspace sharedWorkspace ] selectFile: nsPath inFileViewerRootedAtPath: @"" ];
-    // TODO
-    // QStringList args;
-    // args << ( applicationDirPath() + "/../Resources/osx-open-in-finder.scpt" );
-    // args << path;
-    // QProcess::execute( QString( "/usr/bin/osascript" ), args );
 }
 
 - ( void ) copyLinksFromFiles: ( NSPasteboard * ) pboard
