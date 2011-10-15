@@ -1,39 +1,134 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>
-      BrowseURL
-    </title>
-  </head>
-  <body>
-    <h1>
-      Browse URL
-    </h1>
-    <p>
-      BrowseURL makes it possible to use URLs to point to local directories and files via Explorer, Finder, etc.
-    </p>
-    <h2>Download</h2>
-    <ul>
-      <li>OS X: <a href="http://dl.dropbox.com/u/15942/browseurl/BrowseURL-OSX-2011-10-13.zip">BrowseURL-OSX-2011-10-13.zip</a></li>
-      <li>Windows: TBD</li>
-      <li>Linux: TBD</li>
-    </ul>
-    <h2>
-      Examples
-    </h2>
-    <ul>
-      <li>
-        <a href="browse://home/">browse://home/</a>
-      </li>
-      <li>
-        <a href="browse://dropbox/Photos">browse://dropbox/Photos</a>
-      </li>
-    </ul>
-    <h2>
-      Project Page
-    </h2>
-    <p>
-      <a href="https://github.com/jingoro/browseurl">https://github.com/jingoro/browseurl</a>
-    </p>
-  </body>
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>BrowseURL</title>
+  <meta name="description" content="BrowseURL can create and manage URLs that will open in a File Manager (Windows Explorer, Finder, etc.)">
+  <meta name="author" content="John Nishinaga">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- end CSS-->
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  <script src="js/libs/modernizr-2.0.6.min.js"></script>
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+
+    </header>
+    <div id="main" role="main">
+
+<h1>
+  BrowseURL
+</h1>
+<h2>Download</h2>
+<ul>
+  <li><a href="https://dl.dropbox.com/u/15942/browseurl/BrowseURL-OSX-2011-10-15.zip">Mac OS X 10.7</a></li>
+  <li>Windows - TBD</li>
+  <li>Linux - TBD</li>
+</ul>
+<h2>Background</h2>
+<p>We often use file syncing tools like <a href="https://www.dropbox.com/">Dropbox</a> and <a href="https://www.aerofs.com/">AeroFS</a> when doing collaborative work. How do refer to a local shared file when communicating over email or instant messenger? Is there another way besides writing…</p>
+<blockquote><p>You can find the latest proposal document in Contracts / 2010 / Acme Inc. / Proposals .</p></blockquote>
+<p>Referring to a file using the traditional URL scheme (<code>file:///path/to/file</code>) doesn't quite work for a couple reasons:</p>
+<ol>
+  <li>Most web browsers won't open a <code>file://</code> link using the regular file manager (Finder, Windows Explorer, Nautilus, etc.)
+  </li>
+  <li>A <code>file://</code> link can't point to a shared resource that resides in different locations on different computers.</li>
+</ol>
+<h2>Proposal</h2>
+<p>We can establish a URL scheme for user-managed local file mappings that will open in a file manager. A simple utility or OS-level control panel can manage these mappings and provide shortcuts for creating URLs.</p>
+<p>Out of the box, we can create default mappings for popular destinations:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Base URL</th>
+      <th>Maps to…</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="browse://dropbox/">browse://dropbox/</a></td>
+      <td>$HOME/Dropbox on OS X/Linux<br />
+          $HOME/My Dropbox on Windows</td>
+    </tr>
+    <tr>
+      <td><a href="browse://aerofs/">browse://aerofs/</a></td>
+      <td>$HOME/AeroFS on OS X/Linux<br />
+           $HOME/Documents/AeroFS on Windows</td>
+    </tr>
+    <tr>
+      <td><a href="browse://home/">browse://home/</a></td>
+      <td>$HOME</td>
+    </tr>
+  </tbody>
+</table>
+<p>Here are some examples using the above mappings:</p>
+<table>
+  <thead>
+    <tr>
+      <th>URL</th>
+      <th>Local Path</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="browse://dropbox/Photos/My%20Dog.jpg">browse://dropbox/Photos/My%20Dog.jpg</a></td>
+      <td>$HOME/Dropbox/Photos/My Dog.jpg</td>
+    </tr>
+    <tr>
+      <td><a href="browse://aerofs/Acme/Proposal.pdf">browse://aerofs/Acme/Proposal.pdf</a></td>
+      <td>$HOME/AeroFS/Acme/Proposal.pdf</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Questions</h2>
+<ol>
+  <li>The <code>browse</code> scheme might be a confusing name. What might be better? <code>local</code>? <code>filemanager</code>? </li>
+  <li>Should there be a namespace convention so we don't pollute the top-level? Something like <code>browse://acme.com/project/...</code>?
+</ol>
+<h2>Related</h2>
+<ul>
+<li><a href="https://github.com/catch22/dropbox-url-handler">Catch22's Dropbox URL Handler</a></li>
+<li><a href="https://www.dropbox.com/help/167">Dropbox Sharable Links</a></li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://github.com/jingoro/browseurl">Source Code</a></li>
+<li><a href="mailto:jingoro@casa-z.org">Email Author</a></li>
+</ul>
+
+    </div>
+    <footer>
+
+    </footer>
+  </div> <!--! end of #container -->
+
+</body>
 </html>
